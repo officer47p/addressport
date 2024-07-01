@@ -1,0 +1,17 @@
+GET http://localhost:3001/api/v1/address
+
+###
+
+GET http://localhost:3001/api/v1/address/abcdefgabcdefg
+
+###
+
+POST  http://localhost:3001/api/v1/address
+Content-Type: application/json
+
+{
+    "address": "abcdefgabcdefg",
+    "network": "ethereum",
+    "reason": "scame",
+    "contactEmail": "dfssd@fdd.com"
+}
