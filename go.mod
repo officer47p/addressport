@@ -4,11 +4,15 @@ go 1.21.5
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.16.0
 )
 
+require golang.org/x/net v0.25.0 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/go-resty/resty/v2 v2.13.1
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect

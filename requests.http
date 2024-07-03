@@ -1,11 +1,17 @@
+# Get all reports for all addresses
 GET http://localhost:3001/api/v1/address
-
 ###
-
+# Get all reports for the given address
 GET http://localhost:3001/api/v1/address/abcdefgabcdefg
 
 ###
+# Get all reports for the given address(not found)
+GET http://localhost:3001/api/v1/address/abcdefgabcdefg
 
+###
+# Submit a report for an `address` in a `network`, following by 
+# `reason` and an optional `contactEmail` for reporting activities
+# associated with the address.
 POST  http://localhost:3001/api/v1/address
 Content-Type: application/json
 
@@ -15,3 +21,10 @@ Content-Type: application/json
     "reason": "scame",
     "contactEmail": "dfssd@fdd.com"
 }
+
+###
+# Get all the addresses that the given address has ever associated with.
+# THIS IS A RANDOM ADDRESS FROM ETHERSCAN THAT HAS BOTH SOME NATIVE
+# TRANSACTIONS AND TOKEN TRANSFERS
+GET   http://localhost:3001/api/v1/address/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152/associated
+Content-Type: application/json

@@ -16,7 +16,7 @@ type AddressStore interface {
 	Dropper
 
 	GetAddressById(context.Context, string) (*types.Address, error)
-	GetAddressByAddress(context.Context, string) ([]*types.Address, error)
+	GetAddressesByAddress(context.Context, string) ([]*types.Address, error)
 	GetAddresses(context.Context) ([]*types.Address, error)
 	InsertAddress(context.Context, *types.Address) (*types.Address, error)
 	// DeleteAddress(context.Context, string) error
@@ -71,7 +71,7 @@ func (s *MongoAddressStore) GetAddressById(ctx context.Context, id string) (*typ
 	return &address, nil
 }
 
-func (s *MongoAddressStore) GetAddressByAddress(ctx context.Context, address string) ([]*types.Address, error) {
+func (s *MongoAddressStore) GetAddressesByAddress(ctx context.Context, address string) ([]*types.Address, error) {
 	cur, err := s.coll.Find(ctx, bson.M{"address": address})
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
