@@ -12,6 +12,14 @@ import (
 )
 
 func main() {
+	// Shortest path query for future:
+	// PROFILE
+	// MATCH
+	// (addr1:Address {address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'}),
+	// (addr2:Address {address: '0x422F5acCC812C396600010f224b320a743695f85'}),
+	// p = SHORTESTPATH((addr1)-[:SEND*]-(addr2))
+	// // WHERE all(r IN relationships(p) WHERE r.role IS NOT NULL)
+	// RETURN p
 
 	err := godotenv.Load()
 	if err != nil {
