@@ -1,72 +1,72 @@
 package explorer
 
-import (
-	"encoding/json"
+// import (
+// 	"encoding/json"
 
-	"github.com/go-resty/resty/v2"
-	"github.com/officer47p/addressport/types"
-)
+// 	"github.com/go-resty/resty/v2"
+// 	"github.com/officer47p/addressport/types"
+// )
 
-type Explorer interface {
-	GetAllTransactionsForAddress(string) ([]types.Transaction, error)
-}
+// type Explorer interface {
+// 	GetAllTransactionsForAddress(string) ([]types.Transaction, error)
+// }
 
-type etherscanTransaction struct {
-	Hash            string `json:"hash"`
-	From            string `json:"from"`
-	To              string `json:"to"`
-	ContractAddress string `json:"contractAddress"`
-}
+// type etherscanTransaction struct {
+// 	Hash            string `json:"hash"`
+// 	From            string `json:"from"`
+// 	To              string `json:"to"`
+// 	ContractAddress string `json:"contractAddress"`
+// }
 
-type etherscanGetAllTransactionsReponse struct {
-	Status  string                 `json:"status"`
-	Message string                 `json:"message"`
-	Result  []etherscanTransaction `json:"result"`
-}
+// type etherscanGetAllTransactionsReponse struct {
+// 	Status  string                 `json:"status"`
+// 	Message string                 `json:"message"`
+// 	Result  []etherscanTransaction `json:"result"`
+// }
 
-type EtherscanExplorer struct {
-	apiKey string
-}
+// type EtherscanExplorer struct {
+// 	apiKey string
+// }
 
-func NewEtherscanExplorer(apiKey string) *EtherscanExplorer {
-	return &EtherscanExplorer{apiKey: apiKey}
-}
+// func NewEtherscanExplorer(apiKey string) *EtherscanExplorer {
+// 	return &EtherscanExplorer{apiKey: apiKey}
+// }
 
-func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]types.Transaction, error) {
-	// Create a Resty Client
-	client := resty.New()
+// func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]types.Transaction, error) {
+// 	// Create a Resty Client
+// 	client := resty.New()
 
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"module":     "account",
-			"action":     "txlist",
-			"address":    address,
-			"startblock": "0",
-			"endblock":   "99999999",
-			"page":       "1",
-			"offset":     "10",
-			"sort":       "asc",
-			"apikey":     ex.apiKey,
-		}).
-		SetHeader("Accept", "application/json").
-		// SetAuthToken("BC594900518B4F7EAC75BD37F019E08FBC594900518B4F7EAC75BD37F019E08F").
-		Get("https://api.etherscan.io/api")
+// 	resp, err := client.R().
+// 		SetQueryParams(map[string]string{
+// 			"module":     "account",
+// 			"action":     "txlist",
+// 			"address":    address,
+// 			"startblock": "0",
+// 			"endblock":   "99999999",
+// 			"page":       "1",
+// 			"offset":     "10",
+// 			"sort":       "asc",
+// 			"apikey":     ex.apiKey,
+// 		}).
+// 		SetHeader("Accept", "application/json").
+// 		// SetAuthToken("BC594900518B4F7EAC75BD37F019E08FBC594900518B4F7EAC75BD37F019E08F").
+// 		Get("https://api.etherscan.io/api")
 
-	if err != nil {
-		return []types.Transaction{}, err
-	}
+// 	if err != nil {
+// 		return []types.Transaction{}, err
+// 	}
 
-	var result etherscanGetAllTransactionsReponse
-	err = json.Unmarshal(resp.Body(), &result)
+// 	var result etherscanGetAllTransactionsReponse
+// 	err = json.Unmarshal(resp.Body(), &result)
 
-	if err != nil {
-		return []types.Transaction{}, err
-	}
+// 	if err != nil {
+// 		return []types.Transaction{}, err
+// 	}
 
-	transactions := []types.Transaction{}
-	for _, tx := range result.Result {
-		transactions = append(transactions, types.Transaction{From: tx.From, To: tx.To, Hash: tx.Hash})
-	}
+// 	transactions := []types.Transaction{}
+// 	for _, tx := range result.Result {
+// 		transactions = append(transactions, types.Transaction{From: tx.From, To: tx.To, TxHash: tx.Hash})
+// 	}
 
-	return transactions, nil
-}
+// 	return transactions, nil
+// }
