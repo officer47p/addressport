@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/officer47p/addressport/api"
 	"github.com/officer47p/addressport/db"
+	"github.com/officer47p/addressport/explorer"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -32,22 +33,22 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	neo4jDB, err := db.NewNeo4jGraphDatabase(
-		os.Getenv("NEO4J_URI"),
-		os.Getenv("NEO4J_USER"),
-		os.Getenv("NEO4J_PASSWORD"),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// neo4jDB, err := db.NewNeo4jGraphDatabase(
+	// 	os.Getenv("NEO4J_URI"),
+	// 	os.Getenv("NEO4J_USER"),
+	// 	os.Getenv("NEO4J_PASSWORD"),
+	// )
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	graphDB := db.NewNeo4jBlockchainGraph(*neo4jDB)
+	// graphDB := db.NewNeo4jBlockchainGraph(*neo4jDB)
 
-	nodes, err := graphDB.GetAddresses()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(nodes)
+	// nodes, err := graphDB.GetAddresses()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(nodes)
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(db.DBURI).SetTimeout(time.Second*5))
 	if err != nil {
@@ -59,19 +60,19 @@ func main() {
 	}
 
 	// stores initialization
-	// addressStore := db.NewMongoAddressStore(client, db.DBNAME)
+	addressStore := db.NewMongoAddressStore(client, db.DBNAME)
 	// explorer initialization
-	// etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
+	etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// handlers initialization
-	// addressHandler := api.NewAddressHandler(addressStore, etherscanExplorer)
+	addressHandler := api.NewAddressHandler(addressStore, etherscanExplorer)
 
 	app := fiber.New(config)
-	// apiv1 := app.Group("/api/v1")
+	apiv1 := app.Group("/api/v1")
 
-	// apiv1.Get("/address", addressHandler.HandleGetAddresses)
-	// apiv1.Post("/address", addressHandler.HandlePostAddress)
-	// apiv1.Get("/address/:address", addressHandler.HandleGetAddressByAddress)
-	// apiv1.Get("/address/:address/associated", addressHandler.HandleGetAssociatedAddresses)
+	apiv1.Get("/address", addressHandler.HandleGetAddresses)
+	apiv1.Post("/address", addressHandler.HandlePostAddress)
+	apiv1.Get("/address/:address", addressHandler.HandleGetAddressByAddress)
+	apiv1.Get("/address/:address/associated", addressHandler.HandleGetAssociatedAddresses)
 
 	// not needed now
 	// apiv1.Delete("/address/:id", addressHandler.HandleDeleteAddress)

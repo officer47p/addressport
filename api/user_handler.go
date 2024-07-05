@@ -73,17 +73,18 @@ func (h *AddressHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
-	addresses := []string{}
+	addresses := map[string]*any{}
 
 	for _, tx := range txs {
 		from := tx.From
 		to := tx.To
 
 		if from != address {
-			addresses = append(addresses, from)
+			addresses[from] = nil
 		}
 		if to != address {
-			addresses = append(addresses, to)
+			addresses[to] = nil
+
 		}
 	}
 
