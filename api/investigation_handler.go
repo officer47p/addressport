@@ -1,8 +1,11 @@
 package api
 
 import (
+	"log"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/officer47p/addressport/explorer"
@@ -17,6 +20,14 @@ func NewInvestigationHandler(explorer explorer.Explorer) *InvestigationHandler {
 }
 
 func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s)\n", c.Method(), c.OriginalURL(), string(reqId))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
+
 	address := c.Params("address")
 	address = strings.ToLower(address)
 
@@ -88,7 +99,7 @@ func getAssociatedAddressesForAddress(address string, exp explorer.Explorer) ([]
 	}
 
 	addresses := []*AddressNode{}
-	for k, _ := range addressesSet {
+	for k := range addressesSet {
 		addresses = append(addresses, &AddressNode{Address: k, Children: []*AddressNode{}})
 	}
 

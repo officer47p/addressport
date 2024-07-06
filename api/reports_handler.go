@@ -2,6 +2,10 @@ package api
 
 import (
 	"errors"
+	"log"
+	"math/rand"
+	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/officer47p/addressport/db"
@@ -17,6 +21,14 @@ func NewReportsHandler(reportsStore db.ReportsStore) *ReportsHandler {
 }
 
 func (h *ReportsHandler) HandlePostReport(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s) body: %s\n", c.Method(), c.OriginalURL(), string(reqId), string(c.Body()))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
+
 	var params types.CreateReportParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -40,6 +52,13 @@ func (h *ReportsHandler) HandlePostReport(c *fiber.Ctx) error {
 }
 
 func (h *ReportsHandler) HandleGetReports(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s)\n", c.Method(), c.OriginalURL(), string(reqId))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
 
 	reports, err := h.reportsStore.GetReports(c.Context())
 	if err != nil {
@@ -50,6 +69,14 @@ func (h *ReportsHandler) HandleGetReports(c *fiber.Ctx) error {
 }
 
 func (h *ReportsHandler) HandleGetReportsByAddress(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s)\n", c.Method(), c.OriginalURL(), string(reqId))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
+
 	address := c.Params("address")
 
 	reports, err := h.reportsStore.GetReportsByAddress(c.Context(), address)
@@ -61,6 +88,14 @@ func (h *ReportsHandler) HandleGetReportsByAddress(c *fiber.Ctx) error {
 }
 
 func (h *ReportsHandler) HandleDeleteReport(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s)\n", c.Method(), c.OriginalURL(), string(reqId))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
+
 	id := c.Params("id")
 	err := h.reportsStore.DeleteReport(c.Context(), id)
 	if err != nil {
@@ -70,6 +105,14 @@ func (h *ReportsHandler) HandleDeleteReport(c *fiber.Ctx) error {
 }
 
 func (h *ReportsHandler) HandlePutReportById(c *fiber.Ctx) error {
+	tempId := rand.Intn(100_000_000_000)
+	reqId := strconv.Itoa(tempId)
+	log.Printf("%s %s request(%s)\n", c.Method(), c.OriginalURL(), string(reqId))
+	start := time.Now()
+	defer func() {
+		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
+	}()
+
 	var (
 		id     = c.Params("id")
 		params types.UpdateReportParams

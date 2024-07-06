@@ -2,6 +2,7 @@ package explorer
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/officer47p/addressport/types"
@@ -53,6 +54,7 @@ func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]typ
 		Get("https://api.etherscan.io/api")
 
 	if err != nil {
+		log.Printf("explorer: error while fetching transactions of an address. err: %e\n", err)
 		return []types.Transaction{}, err
 	}
 
@@ -60,6 +62,7 @@ func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]typ
 	err = json.Unmarshal(resp.Body(), &result)
 
 	if err != nil {
+		log.Printf("explorer: error while fetching transactions of an address. err: %e\n response: %s\n", err, resp.Body())
 		return []types.Transaction{}, err
 	}
 

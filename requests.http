@@ -59,3 +59,8 @@ Content-Type: application/json
 GET   http://localhost:3001/api/v1/investigation/tools/address-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152?depth=2&
 Content-Type: application/json
 
+
+###
+# DEPTH 3
+GET   http://localhost:3001/api/v1/investigation/tools/address-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152?depth=3&
+Content-Type: application/json
