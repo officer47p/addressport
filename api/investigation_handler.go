@@ -15,7 +15,7 @@ type InvestigationHandler struct {
 	explorer explorer.Explorer
 }
 
-func NewInvestigationHandler(explorer explorer.Explorer) *InvestigationHandler {
+func NewInvestigationToolHandler(explorer explorer.Explorer) *InvestigationHandler {
 	return &InvestigationHandler{explorer: explorer}
 }
 

@@ -33,23 +33,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// neo4jDB, err := db.NewNeo4jGraphDatabase(
-	// 	os.Getenv("NEO4J_URI"),
-	// 	os.Getenv("NEO4J_USER"),
-	// 	os.Getenv("NEO4J_PASSWORD"),
-	// )
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// graphDB := db.NewNeo4jBlockchainGraph(*neo4jDB)
-
-	// nodes, err := graphDB.GetAddresses()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(nodes)
-
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(db.DBURI).SetTimeout(time.Second*5))
 	if err != nil {
 		log.Fatal(err)
@@ -65,7 +48,7 @@ func main() {
 	etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// handlers initialization
 	reportsHandler := api.NewReportsHandler(reportsStore)
-	investigationHandler := api.NewInvestigationHandler(etherscanExplorer)
+	investigationToolHandler := api.NewInvestigationToolHandler(etherscanExplorer)
 
 	app := fiber.New(config)
 	apiv1 := app.Group("/api/v1")
@@ -77,7 +60,7 @@ func main() {
 	apiv1.Delete("/reports/:id", reportsHandler.HandleDeleteReport)
 	apiv1.Put("/reports/:id", reportsHandler.HandlePutReportById)
 
-	apiv1.Get("/investigation/tools/address-association/:address", investigationHandler.HandleGetAssociatedAddresses)
+	apiv1.Get("/investigation/tools/address-association/:address", investigationToolHandler.HandleGetAssociatedAddresses)
 
 	err = app.Listen(*listenAddr)
 	if err != nil {
