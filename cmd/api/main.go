@@ -60,22 +60,24 @@ func main() {
 	}
 
 	// stores initialization
-	addressStore := db.NewMongoAddressStore(client, db.DBNAME)
+	reportsStore := db.NewMongoReportsStore(client, db.DBNAME)
 	// explorer initialization
 	etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// handlers initialization
-	addressHandler := api.NewAddressHandler(addressStore, etherscanExplorer)
+	reportsHandler := api.NewReportsHandler(reportsStore, etherscanExplorer)
 
 	app := fiber.New(config)
 	apiv1 := app.Group("/api/v1")
 
-	apiv1.Get("/address", addressHandler.HandleGetAddresses)
-	apiv1.Post("/address", addressHandler.HandlePostAddress)
-	apiv1.Get("/address/:address", addressHandler.HandleGetAddressByAddress)
-	apiv1.Get("/address/:address/associated", addressHandler.HandleGetAssociatedAddresses)
+	// TODO: add query filters to the handler
+	apiv1.Get("/reports", reportsHandler.HandleGetReports)
+	apiv1.Post("/reports", reportsHandler.HandlePostReport)
+	apiv1.Get("/reports/:address", reportsHandler.HandleGetReportsByAddress)
+	apiv1.Delete("/reports/:id", reportsHandler.HandleDeleteReport)
+
+	apiv1.Get("/address/:address/associated", reportsHandler.HandleGetAssociatedAddresses)
 
 	// not needed now
-	// apiv1.Delete("/address/:id", addressHandler.HandleDeleteAddress)
 	// apiv1.Put("/address/:id", addressHandler.HandlePutAddress)
 
 	err = app.Listen(*listenAddr)

@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/officer47p/addressport/types"
@@ -19,7 +20,7 @@ type AddressStore interface {
 	GetAddressesByAddress(context.Context, string) ([]*types.Address, error)
 	GetAddresses(context.Context) ([]*types.Address, error)
 	InsertAddress(context.Context, *types.Address) (*types.Address, error)
-	// DeleteAddress(context.Context, string) error
+	DeleteAddress(context.Context, string) error
 	// UpdateAddress(ctx context.Context, filter bson.M, params types.UpdateAddressParams) error
 }
 
@@ -28,7 +29,7 @@ type MongoAddressStore struct {
 	coll   *mongo.Collection
 }
 
-func NewMongoAddressStore(client *mongo.Client, dbname string) *MongoAddressStore {
+func NewMongoReportsStore(client *mongo.Client, dbname string) *MongoAddressStore {
 	return &MongoAddressStore{
 		client: client,
 		coll:   client.Database(dbname).Collection(addressColl),
@@ -99,23 +100,19 @@ func (s *MongoAddressStore) InsertAddress(ctx context.Context, address *types.Ad
 	return address, nil
 }
 
-// func (s *MongoAddressStore) DeleteAddress(ctx context.Context, id string) error {
-// 	oid, err := primitive.ObjectIDFromHex(id)
-// 	if err != nil {
-// 		return err
-// 	}
+func (s *MongoAddressStore) DeleteAddress(ctx context.Context, address string) error {
 
-// 	res, err := s.coll.DeleteOne(ctx, bson.M{"_id": oid})
-// 	if err != nil {
-// 		return err
-// 	}
+	res, err := s.coll.DeleteOne(ctx, bson.M{"address": address})
+	if err != nil {
+		return err
+	}
 
-// 	if res.DeletedCount == 0 {
-// 		return errors.New("no address with the given id was found")
-// 	}
+	if res.DeletedCount == 0 {
+		return errors.New("no address with the given id was found")
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
 // func (s *MongoAddressStore) UpdateAddress(ctx context.Context, filter bson.M, params types.UpdateAddressParams) error {
 // 	// to prevent changing a field we can do this:

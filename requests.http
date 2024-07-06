@@ -1,22 +1,22 @@
 # Get all reports for all addresses
-GET http://localhost:3001/api/v1/address
+GET http://localhost:3001/api/v1/reports
 ###
 # Get all reports for the given address
-GET http://localhost:3001/api/v1/address/abcdefgabcdefg
+GET http://localhost:3001/api/v1/reports/abcdefgabcdefg
 
 ###
 # Get all reports for the given address(not found)
-GET http://localhost:3001/api/v1/address/abcdefgabcdefg
+GET http://localhost:3001/api/v1/reports/abcdbcdefg
 
 ###
 # Submit a report for an `address` in a `network`, following by 
 # `reason` and an optional `contactEmail` for reporting activities
 # associated with the address.
-POST  http://localhost:3001/api/v1/address
+POST  http://localhost:3001/api/v1/reports
 Content-Type: application/json
 
 {
-    "address": "abcdefgabcdefg",
+    "address": "ayujkjnbvfdgh",
     "network": "ethereum",
     "reason": "scame",
     "contactEmail": "dfssd@fdd.com"

@@ -14,11 +14,11 @@ type AddressHandler struct {
 	explorer     explorer.Explorer
 }
 
-func NewAddressHandler(addressStore db.AddressStore, explorer explorer.Explorer) *AddressHandler {
+func NewReportsHandler(addressStore db.AddressStore, explorer explorer.Explorer) *AddressHandler {
 	return &AddressHandler{addressStore: addressStore, explorer: explorer}
 }
 
-func (h *AddressHandler) HandlePostAddress(c *fiber.Ctx) error {
+func (h *AddressHandler) HandlePostReport(c *fiber.Ctx) error {
 	var params types.CreateAddressParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
@@ -41,7 +41,7 @@ func (h *AddressHandler) HandlePostAddress(c *fiber.Ctx) error {
 	return c.JSON(insertedAddress)
 }
 
-func (h *AddressHandler) HandleGetAddresses(c *fiber.Ctx) error {
+func (h *AddressHandler) HandleGetReports(c *fiber.Ctx) error {
 
 	users, err := h.addressStore.GetAddresses(c.Context())
 	if err != nil {
@@ -51,7 +51,7 @@ func (h *AddressHandler) HandleGetAddresses(c *fiber.Ctx) error {
 	return c.JSON(&users)
 }
 
-func (h *AddressHandler) HandleGetAddressByAddress(c *fiber.Ctx) error {
+func (h *AddressHandler) HandleGetReportsByAddress(c *fiber.Ctx) error {
 	address := c.Params("address")
 
 	addresses, err := h.addressStore.GetAddressesByAddress(c.Context(), address)
@@ -107,14 +107,14 @@ func (h *AddressHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
 	//                 scam_interactions.append(to_address)
 }
 
-// func (h *AddressHandler) HandleDeleteAddress(c *fiber.Ctx) error {
-// 	id := c.Params("id")
-// 	err := h.addressStore.DeleteAddress(c.Context(), id)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.JSON(map[string]string{"deleted": id})
-// }
+func (h *AddressHandler) HandleDeleteReport(c *fiber.Ctx) error {
+	id := c.Params("id")
+	err := h.addressStore.DeleteAddress(c.Context(), id)
+	if err != nil {
+		return err
+	}
+	return c.JSON(map[string]string{"deleted": id})
+}
 
 // func (h *AddressHandler) HandlePutAddress(c *fiber.Ctx) error {
 // 	var (
