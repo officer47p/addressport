@@ -22,9 +22,32 @@ Content-Type: application/json
     "contactEmail": "dfssd@fdd.com"
 }
 
+# NOT IMPLEMENTED
+# PUT  http://localhost:3001/api/v1/reports
+# Content-Type: application/json
+
+# {
+#     "address": "ayujkjnbvfdgh",
+#     "network": "ethereum",
+#     "reason": "scame",
+#     "contactEmail": "dfssd@fdd.com"
+# }
+
+
+# ###
+# DELETE  http://localhost:3001/api/v1/reports
+# Content-Type: application/json
+
+# {
+#     "address": "ayujkjnbvfdgh",
+#     "network": "ethereum",
+#     "reason": "scame",
+#     "contactEmail": "dfssd@fdd.com"
+# }
+
 ###
 # Get all the addresses that the given address has ever associated with.
 # THIS IS A RANDOM ADDRESS FROM ETHERSCAN THAT HAS BOTH SOME NATIVE
 # TRANSACTIONS AND TOKEN TRANSFERS
-GET   http://localhost:3001/api/v1/address/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152/associated
+GET   http://localhost:3001/api/v1/investigation/tools/address-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152
 Content-Type: application/json

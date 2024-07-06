@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"regexp"
 )
 
 const (
@@ -15,30 +16,30 @@ const (
 	maxEmailLen   = 100
 )
 
-// type UpdateAddressParams struct {
-// 	FirstName string `bson:"firstName,omitempty" json:"firstName,omitempty"`
-// 	LastName  string `bson:"lastName,omitempty" json:"lastName,omitempty"`
-// }
+func (params UpdateReportParams) Validate() []error {
+	errors := []error{}
+	if len(params.Reason) < minReasonLen {
+		errors = append(errors, fmt.Errorf("reason length should be at least %d characters", minReasonLen))
+	}
+	if !isEmailValid(params.ContactEmail) {
+		errors = append(errors, fmt.Errorf("contact email is not valid"))
+	}
+	return errors
+}
 
-// func (params UpdateAddressParams) Validate() []error {
-// 	errors := []error{}
-// 	if params.FirstName != "" && len(params.FirstName) < minNameLen {
-// 		errors = append(errors, fmt.Errorf("firstName length should be at least %d characters", minNameLen))
-// 	}
-// 	if params.LastName != "" && len(params.LastName) < minNameLen {
-// 		errors = append(errors, fmt.Errorf("lastName length should be at least %d characters", minNameLen))
-// 	}
-// 	return errors
-// }
-
-type CreateAddressParams struct {
+type CreateReportParams struct {
 	Address      string `json:"address"`
 	Network      string `json:"network"`
 	Reason       string `json:"reason"`
 	ContactEmail string `json:"contactEmail"`
 }
 
-func (params CreateAddressParams) Validate() []error {
+type UpdateReportParams struct {
+	ContactEmail string `bson:"contactEmail,omitempty" json:"contactEmail"`
+	Reason       string `bson:"reason,omitempty" json:"reason"`
+}
+
+func (params CreateReportParams) Validate() []error {
 	errors := []error{}
 	if len(params.Address) < minAddressLen {
 		errors = append(errors, fmt.Errorf("address length should be at least %d characters", minAddressLen))
@@ -49,19 +50,19 @@ func (params CreateAddressParams) Validate() []error {
 	if len(params.Reason) < minReasonLen {
 		errors = append(errors, fmt.Errorf("reason length should be at least %d characters", minReasonLen))
 	}
-	// if !isEmailValid(params.Email) {
-	// 	errors = append(errors, fmt.Errorf("email is not valid"))
-	// }
+	if !isEmailValid(params.ContactEmail) {
+		errors = append(errors, fmt.Errorf("contact email is not valid"))
+	}
 
 	return errors
 }
 
-// func isEmailValid(e string) bool {
-// 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-// 	return emailRegex.MatchString(e)
-// }
+func isEmailValid(e string) bool {
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return emailRegex.MatchString(e)
+}
 
-type Address struct {
+type Report struct {
 	ID           string `bson:"_id,omitempty" json:"id,omitempty"`
 	Address      string `bson:"address" json:"address"`
 	Network      string `bson:"network" json:"network"`
@@ -69,12 +70,12 @@ type Address struct {
 	ContactEmail string `bson:"contactEmail" json:"contactEmail"`
 }
 
-func NewAddressFromParams(params CreateAddressParams) (*Address, error) {
+func NewReportFromParams(params CreateReportParams) (*Report, error) {
 	// encPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcryptCost)
 	// if err != nil {
 	// 	return nil, err
 	// }
-	return &Address{
+	return &Report{
 		Address:      params.Address,
 		Network:      params.Network,
 		Reason:       params.Reason,

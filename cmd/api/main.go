@@ -64,7 +64,8 @@ func main() {
 	// explorer initialization
 	etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// handlers initialization
-	reportsHandler := api.NewReportsHandler(reportsStore, etherscanExplorer)
+	reportsHandler := api.NewReportsHandler(reportsStore)
+	investigationHandler := api.NewInvestigationHandler(etherscanExplorer)
 
 	app := fiber.New(config)
 	apiv1 := app.Group("/api/v1")
@@ -74,11 +75,9 @@ func main() {
 	apiv1.Post("/reports", reportsHandler.HandlePostReport)
 	apiv1.Get("/reports/:address", reportsHandler.HandleGetReportsByAddress)
 	apiv1.Delete("/reports/:id", reportsHandler.HandleDeleteReport)
+	apiv1.Put("/reports/:id", reportsHandler.HandlePutReportById)
 
-	apiv1.Get("/address/:address/associated", reportsHandler.HandleGetAssociatedAddresses)
-
-	// not needed now
-	// apiv1.Put("/address/:id", addressHandler.HandlePutAddress)
+	apiv1.Get("/investigation/tools/address-association/:address", investigationHandler.HandleGetAssociatedAddresses)
 
 	err = app.Listen(*listenAddr)
 	if err != nil {
