@@ -2,6 +2,7 @@ package api
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/officer47p/addressport/explorer"
@@ -17,6 +18,8 @@ func NewInvestigationHandler(explorer explorer.Explorer) *InvestigationHandler {
 
 func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
 	address := c.Params("address")
+	address = strings.ToLower(address)
+
 	depthString := c.Query("depth", "1")
 	depth, err := strconv.Atoi(depthString)
 	if err != nil {
@@ -33,7 +36,7 @@ func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error 
 }
 
 type AddressNode struct {
-	Address  string
+	Address  string         `json:"address"`
 	Children []*AddressNode `json:"children,omitempty"`
 }
 
