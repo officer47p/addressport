@@ -1,6 +1,8 @@
 package api
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/officer47p/addressport/explorer"
 )
@@ -9,37 +11,106 @@ type InvestigationHandler struct {
 	explorer explorer.Explorer
 }
 
-func NewInvestigationHandler(explorer explorer.Explorer) *InvestigationHandler {
-	return &InvestigationHandler{explorer: explorer}
+type AddressNode struct {
+	Address  string
+	Children []*AddressNode
 }
 
-func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
-	address := c.Params("address")
+func (n *AddressNode) PopulateNode(depth int, exp explorer.Explorer) error {
 
-	txs, err := h.explorer.GetAllTransactionsForAddress(address)
+	addresses, err := getAssociatedAddressesForAddress(n.Address, exp)
 	if err != nil {
 		return err
 	}
-	if len(txs) == 0 {
-		return c.SendStatus(404)
+
+	n.Children = addresses
+
+	if depth <= 1 {
+		return nil
 	}
 
-	addresses := map[string]bool{}
+	for _, child := range n.Children {
+		err := child.PopulateNode(depth-1, exp)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func getAssociatedAddressesForAddress(address string, exp explorer.Explorer) ([]*AddressNode, error) {
+	txs, err := exp.GetAllTransactionsForAddress(address)
+	if err != nil {
+		return nil, err
+	}
+	if len(txs) == 0 {
+		return []*AddressNode{}, nil
+	}
+
+	addressesSet := map[string]bool{}
 
 	for _, tx := range txs {
 		from := tx.From
 		to := tx.To
 
 		if from != address {
-			addresses[from] = true
+			addressesSet[from] = true
 		}
 		if to != address {
-			addresses[to] = true
+			addressesSet[to] = true
 
 		}
 	}
 
-	return c.JSON(addresses)
+	addresses := []*AddressNode{}
+	for k, _ := range addressesSet {
+		addresses = append(addresses, &AddressNode{Address: k, Children: []*AddressNode{}})
+	}
+
+	return addresses, nil
+}
+func NewInvestigationHandler(explorer explorer.Explorer) *InvestigationHandler {
+	return &InvestigationHandler{explorer: explorer}
+}
+
+func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
+	address := c.Params("address")
+	depthString := c.Query("depth", "1")
+	depth, err := strconv.Atoi(depthString)
+	if err != nil {
+		return err
+	}
+
+	addressNode := AddressNode{Address: address, Children: []*AddressNode{}}
+	addressNode.PopulateNode(depth, h.explorer)
+
+	return c.JSON(addressNode)
+
+	// txs, err := h.explorer.GetAllTransactionsForAddress(address)
+	// if err != nil {
+	// 	return err
+	// }
+	// if len(txs) == 0 {
+	// 	return c.SendStatus(404)
+	// }
+
+	// addresses := map[string]bool{}
+
+	// for _, tx := range txs {
+	// 	from := tx.From
+	// 	to := tx.To
+
+	// 	if from != address {
+	// 		addresses[from] = true
+	// 	}
+	// 	if to != address {
+	// 		addresses[to] = true
+
+	// 	}
+	// }
+
+	// return c.JSON(addresses)
 
 	// for txn in txn_data['result']:
 	//         from_address = txn['from']
