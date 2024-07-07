@@ -1,11 +1,11 @@
-package explorer
+package explorers
 
 import (
 	"encoding/json"
 	"log"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/officer47p/addressport/types"
+	"github.com/officer47p/addressport/lib/types"
 )
 
 type Explorer interface {

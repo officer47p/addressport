@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/officer47p/addressport/types"
+	"github.com/officer47p/addressport/lib/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

@@ -6,7 +6,7 @@ import (
 
 	ethereumTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/officer47p/addressport/types"
+	"github.com/officer47p/addressport/lib/types"
 )
 
 type EvmProvider interface {

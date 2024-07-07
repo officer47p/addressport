@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/officer47p/addressport/db"
-	"github.com/officer47p/addressport/providers"
-	"github.com/officer47p/addressport/types"
+	"github.com/officer47p/addressport/lib/db"
+	"github.com/officer47p/addressport/lib/providers"
+	"github.com/officer47p/addressport/lib/types"
 )
 
 func main() {

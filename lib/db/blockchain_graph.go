@@ -6,8 +6,8 @@ import (
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
-	"github.com/officer47p/addressport/types"
-	"github.com/officer47p/addressport/utils"
+	"github.com/officer47p/addressport/lib/types"
+	"github.com/officer47p/addressport/lib/utils"
 )
 
 type BlockchainGraph interface {

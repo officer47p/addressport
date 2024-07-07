@@ -9,9 +9,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/officer47p/addressport/api"
-	"github.com/officer47p/addressport/db"
-	"github.com/officer47p/addressport/explorer"
+	"github.com/officer47p/addressport/lib/api"
+	"github.com/officer47p/addressport/lib/db"
+	"github.com/officer47p/addressport/lib/explorers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -45,7 +45,7 @@ func main() {
 	// stores initialization
 	reportsStore := db.NewMongoReportsStore(client, db.DBNAME)
 	// explorer initialization
-	etherscanExplorer := explorer.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
+	etherscanExplorer := explorers.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// handlers initialization
 	reportsHandler := api.NewReportsHandler(reportsStore)
 	investigationToolHandler := api.NewInvestigationToolHandler(etherscanExplorer)

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/db"
-	"github.com/officer47p/addressport/types"
+	"github.com/officer47p/addressport/lib/db"
+	"github.com/officer47p/addressport/lib/types"
 )
 
 type ReportsHandler struct {
