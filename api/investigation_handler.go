@@ -89,10 +89,10 @@ func getAssociatedAddressesForAddress(address string, exp explorer.Explorer) ([]
 		from := tx.From
 		to := tx.To
 
-		if from != address {
+		if from != "" && from != address {
 			addressesSet[from] = true
 		}
-		if to != address {
+		if to != "" && to != address {
 			addressesSet[to] = true
 
 		}
