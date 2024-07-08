@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"github.com/officer47p/addressport/lib/api"
 	"github.com/officer47p/addressport/lib/db"
@@ -51,6 +52,7 @@ func main() {
 	investigationToolHandler := api.NewInvestigationToolHandler(etherscanExplorer)
 
 	app := fiber.New(config)
+	app.Use(cors.New())
 	apiv1 := app.Group("/api/v1")
 
 	// TODO: add query filters to the handler

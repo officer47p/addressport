@@ -1,27 +1,19 @@
 {
-  "name": "addressport",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "webpack serve --config ./src/client/webpack.dev.js",
-    "host": "webpack serve --host 0.0.0.0 --config ./src/client/webpack.dev.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "three": "^0.162.0"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@types/dat.gui": "^0.7.12",
-    "@types/three": "^0.162.0",
-    "dat.gui": "^0.7.9",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.4.2",
-    "webpack": "^5.90.3",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.3"
+    "@types/d3": "^7.4.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1"
+  },
+  "dependencies": {
+    "d3": "^7.9.0"
   }
 }
