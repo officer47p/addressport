@@ -1,4 +1,4 @@
-package explorers
+package thirdparty
 
 import (
 	"encoding/json"

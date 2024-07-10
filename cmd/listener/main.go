@@ -7,7 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/officer47p/addressport/lib/db"
-	"github.com/officer47p/addressport/lib/providers"
+	"github.com/officer47p/addressport/lib/thirdparty"
 	"github.com/officer47p/addressport/lib/types"
 )
 
@@ -37,7 +37,7 @@ func main() {
 
 	graphDB := db.NewNeo4jBlockchainGraph(*neo4jDB)
 
-	provider, err := providers.NewEvmProvider(os.Getenv("ETHREUM_PROVIDER_URI"), types.Network{Name: "ethereum", Currency: "ETH", ChainID: 1, Decimals: 18, StartingBlockNumber: 0})
+	provider, err := thirdparty.NewEvmProvider(os.Getenv("ETHREUM_PROVIDER_URI"), types.Network{Name: "ethereum", Currency: "ETH", ChainID: 1, Decimals: 18, StartingBlockNumber: 0})
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/lib/explorers"
+	"github.com/officer47p/addressport/lib/thirdparty"
 )
 
 type InvestigationHandler struct {
-	explorer explorers.Explorer
+	explorer thirdparty.Explorer
 }
 
-func NewInvestigationToolHandler(explorer explorers.Explorer) *InvestigationHandler {
+func NewInvestigationToolHandler(explorer thirdparty.Explorer) *InvestigationHandler {
 	return &InvestigationHandler{explorer: explorer}
 }
 
@@ -51,7 +51,7 @@ type AddressNode struct {
 	Children []*AddressNode `json:"children,omitempty"`
 }
 
-func (n *AddressNode) PopulateNode(depth int, exp explorers.Explorer) error {
+func (n *AddressNode) PopulateNode(depth int, exp thirdparty.Explorer) error {
 
 	addresses, err := getAssociatedAddressesForAddress(n.Address, exp)
 	if err != nil {
@@ -74,7 +74,7 @@ func (n *AddressNode) PopulateNode(depth int, exp explorers.Explorer) error {
 	return nil
 }
 
-func getAssociatedAddressesForAddress(address string, exp explorers.Explorer) ([]*AddressNode, error) {
+func getAssociatedAddressesForAddress(address string, exp thirdparty.Explorer) ([]*AddressNode, error) {
 	txs, err := exp.GetAllTransactionsForAddress(address)
 	if err != nil {
 		return nil, err

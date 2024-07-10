@@ -8,16 +8,16 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/lib/db"
+	"github.com/officer47p/addressport/lib/modules"
 	"github.com/officer47p/addressport/lib/types"
 )
 
 type ReportsHandler struct {
-	reportsStore db.ReportsStore
+	reportsService modules.ReportsService
 }
 
-func NewReportsHandler(reportsStore db.ReportsStore) *ReportsHandler {
-	return &ReportsHandler{reportsStore: reportsStore}
+func NewReportsHandler(reportsService modules.ReportsService) *ReportsHandler {
+	return &ReportsHandler{reportsService: reportsService}
 }
 
 func (h *ReportsHandler) HandlePostReport(c *fiber.Ctx) error {
@@ -38,17 +38,12 @@ func (h *ReportsHandler) HandlePostReport(c *fiber.Ctx) error {
 		return errors.Join(errs...)
 	}
 
-	report, err := types.NewReportFromParams(params)
+	report, err := h.reportsService.CreateReport(c.Context(), params)
 	if err != nil {
 		return err
 	}
 
-	insertedReport, err := h.reportsStore.InsertReport(c.Context(), report)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(insertedReport)
+	return c.JSON(report)
 }
 
 func (h *ReportsHandler) HandleGetReports(c *fiber.Ctx) error {
@@ -60,7 +55,7 @@ func (h *ReportsHandler) HandleGetReports(c *fiber.Ctx) error {
 		log.Printf("request(%s) took %d ms\n", reqId, time.Since(start).Milliseconds())
 	}()
 
-	reports, err := h.reportsStore.GetReports(c.Context())
+	reports, err := h.reportsService.GetAllReports(c.Context())
 	if err != nil {
 		return err
 	}
@@ -79,7 +74,7 @@ func (h *ReportsHandler) HandleGetReportsByAddress(c *fiber.Ctx) error {
 
 	address := c.Params("address")
 
-	reports, err := h.reportsStore.GetReportsByAddress(c.Context(), address)
+	reports, err := h.reportsService.GetReportsForAddress(c.Context(), address)
 	if err != nil {
 		return err
 	}
@@ -97,7 +92,7 @@ func (h *ReportsHandler) HandleDeleteReport(c *fiber.Ctx) error {
 	}()
 
 	id := c.Params("id")
-	err := h.reportsStore.DeleteReport(c.Context(), id)
+	err := h.reportsService.DeleteReportById(c.Context(), id)
 	if err != nil {
 		return err
 	}
@@ -127,7 +122,7 @@ func (h *ReportsHandler) HandlePutReportById(c *fiber.Ctx) error {
 	}
 
 	// filter := bson.M{"_id": oid}
-	if err := h.reportsStore.UpdateReport(c.Context(), id, params); err != nil {
+	if err := h.reportsService.UpdateReportById(c.Context(), id, params); err != nil {
 		return err
 	}
 	return c.JSON(map[string]string{"updated": id})

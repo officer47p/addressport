@@ -12,7 +12,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/officer47p/addressport/lib/api"
 	"github.com/officer47p/addressport/lib/db"
-	"github.com/officer47p/addressport/lib/explorers"
+	"github.com/officer47p/addressport/lib/modules"
+	"github.com/officer47p/addressport/lib/thirdparty"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -43,12 +44,16 @@ func main() {
 		log.Fatalf("warmup connection to database was faild. error: %+v", err)
 	}
 
-	// stores initialization
+	// // Dependencies
+	// store initialization
 	reportsStore := db.NewMongoReportsStore(client, db.DBNAME)
-	// explorer initialization
-	etherscanExplorer := explorers.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
+	// thirdparty initialization
+	etherscanExplorer := thirdparty.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
+	// service initialization
+	reportsService := modules.NewReportsService(reportsStore)
+
 	// handlers initialization
-	reportsHandler := api.NewReportsHandler(reportsStore)
+	reportsHandler := api.NewReportsHandler(reportsService)
 	investigationToolHandler := api.NewInvestigationToolHandler(etherscanExplorer)
 
 	app := fiber.New(config)
