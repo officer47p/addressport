@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/lib/thirdparty"
+	"github.com/officer47p/addressport/lib/services"
 )
 
 type InvestigationHandler struct {
-	explorer thirdparty.Explorer
+	investigationService services.InvestigationToolService
 }
 
-func NewInvestigationToolHandler(explorer thirdparty.Explorer) *InvestigationHandler {
-	return &InvestigationHandler{explorer: explorer}
+func NewInvestigationToolHandler(investigationService services.InvestigationToolService) *InvestigationHandler {
+	return &InvestigationHandler{investigationService: investigationService}
 }
 
 func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error {
@@ -37,71 +37,11 @@ func (h *InvestigationHandler) HandleGetAssociatedAddresses(c *fiber.Ctx) error 
 		return err
 	}
 
-	addressNode := AddressNode{Address: address, Children: []*AddressNode{}}
-	if err = addressNode.PopulateNode(depth, h.explorer); err != nil {
-		return err
-	}
-
-	return c.JSON(addressNode)
-
-}
-
-type AddressNode struct {
-	Address  string         `json:"address"`
-	Children []*AddressNode `json:"children,omitempty"`
-}
-
-func (n *AddressNode) PopulateNode(depth int, exp thirdparty.Explorer) error {
-
-	addresses, err := getAssociatedAddressesForAddress(n.Address, exp)
+	result, err := h.investigationService.GetAssociatedAddressesForAddress(address, depth)
 	if err != nil {
 		return err
 	}
 
-	n.Children = addresses
+	return c.JSON(result)
 
-	if depth <= 1 {
-		return nil
-	}
-
-	for _, child := range n.Children {
-		err := child.PopulateNode(depth-1, exp)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func getAssociatedAddressesForAddress(address string, exp thirdparty.Explorer) ([]*AddressNode, error) {
-	txs, err := exp.GetAllTransactionsForAddress(address)
-	if err != nil {
-		return nil, err
-	}
-	if len(txs) == 0 {
-		return []*AddressNode{}, nil
-	}
-
-	addressesSet := map[string]bool{}
-
-	for _, tx := range txs {
-		from := tx.From
-		to := tx.To
-
-		if from != "" && from != address {
-			addressesSet[from] = true
-		}
-		if to != "" && to != address {
-			addressesSet[to] = true
-
-		}
-	}
-
-	addresses := []*AddressNode{}
-	for k := range addressesSet {
-		addresses = append(addresses, &AddressNode{Address: k, Children: []*AddressNode{}})
-	}
-
-	return addresses, nil
 }

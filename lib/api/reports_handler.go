@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/lib/modules"
+	"github.com/officer47p/addressport/lib/services"
 	"github.com/officer47p/addressport/lib/types"
 )
 
 type ReportsHandler struct {
-	reportsService modules.ReportsService
+	reportsService services.ReportsService
 }
 
-func NewReportsHandler(reportsService modules.ReportsService) *ReportsHandler {
+func NewReportsHandler(reportsService services.ReportsService) *ReportsHandler {
 	return &ReportsHandler{reportsService: reportsService}
 }
 

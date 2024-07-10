@@ -12,7 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/officer47p/addressport/lib/api"
 	"github.com/officer47p/addressport/lib/db"
-	"github.com/officer47p/addressport/lib/modules"
+	"github.com/officer47p/addressport/lib/services"
 	"github.com/officer47p/addressport/lib/thirdparty"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -50,11 +50,12 @@ func main() {
 	// thirdparty initialization
 	etherscanExplorer := thirdparty.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// service initialization
-	reportsService := modules.NewReportsService(reportsStore)
+	reportsService := services.NewReportsService(reportsStore)
+	investigationToolService := services.NewInvestigationToolService(etherscanExplorer)
 
 	// handlers initialization
 	reportsHandler := api.NewReportsHandler(reportsService)
-	investigationToolHandler := api.NewInvestigationToolHandler(etherscanExplorer)
+	investigationToolHandler := api.NewInvestigationToolHandler(investigationToolService)
 
 	app := fiber.New(config)
 	app.Use(cors.New())
