@@ -4,6 +4,12 @@ build_api:
 run_api: build_api
 	@./bin/api --listenAddr :3001
 
+build_client:
+	@ go build -o bin/client cmd/client/main.go
+
+run_client: build_client
+	@./bin/client
+
 build_listener:
 	@ go build -o bin/listener cmd/listener/main.go
 
