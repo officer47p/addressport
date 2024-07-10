@@ -3,7 +3,9 @@ module github.com/officer47p/addressport
 go 1.21.5
 
 require (
+	github.com/dominikbraun/graph v0.23.0
 	github.com/ethereum/go-ethereum v1.14.6
+	github.com/go-echarts/go-echarts/v2 v2.4.0
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/joho/godotenv v1.5.1
 	github.com/neo4j/neo4j-go-driver/v5 v5.22.0

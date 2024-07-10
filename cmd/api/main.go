@@ -69,6 +69,7 @@ func main() {
 	apiv1.Put("/reports/:id", reportsHandler.HandlePutReportById)
 
 	apiv1.Get("/investigation/tools/address-association/:address", investigationToolHandler.HandleGetAssociatedAddresses)
+	apiv1.Get("/investigation/tools/transaction-association/:address", investigationToolHandler.HandleGetAssociatedTransactionsForAddress)
 
 	err = app.Listen(*listenAddr)
 	if err != nil {

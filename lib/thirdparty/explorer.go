@@ -16,6 +16,7 @@ type etherscanTransaction struct {
 	Hash            string `json:"hash"`
 	From            string `json:"from"`
 	To              string `json:"to"`
+	Value           string `json:"value"`
 	ContractAddress string `json:"contractAddress"`
 }
 
@@ -68,7 +69,7 @@ func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]typ
 
 	transactions := []types.Transaction{}
 	for _, tx := range result.Result {
-		transactions = append(transactions, types.Transaction{From: tx.From, To: tx.To, TxHash: tx.Hash})
+		transactions = append(transactions, types.Transaction{From: tx.From, To: tx.To, TxHash: tx.Hash, Value: tx.Value})
 	}
 
 	return transactions, nil
