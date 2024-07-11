@@ -8,6 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/components"
+	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/gofiber/fiber/v2"
 	"github.com/officer47p/addressport/lib/services"
 )
@@ -76,6 +79,47 @@ func (h *InvestigationHandler) HandleGetAssociatedTransactionsForAddress(c *fibe
 		return err
 	}
 
-	return c.JSON(map[string]any{"nodes": nodes, "links": links})
+	graphNodes := []opts.GraphNode{}
+	for _, n := range *nodes {
+		graphNodes = append(graphNodes, opts.GraphNode{Name: n.Address})
+	}
+
+	graphLinks := []opts.GraphLink{}
+	for _, l := range *links {
+		graphLinks = append(graphLinks, opts.GraphLink{Source: l.Source.Address, Target: l.Target.Address})
+	}
+
+	page := components.NewPage()
+	graph := charts.NewGraph()
+	graph.SetGlobalOptions(
+		charts.WithTitleOpts(opts.Title{
+			Title: "Addressport",
+		}))
+
+	graph.AddSeries("graph", graphNodes, graphLinks).
+		SetSeriesOptions(
+			charts.WithGraphChartOpts(opts.GraphChart{
+				Layout: "circular",
+				// Force:              &opts.GraphForce{Repulsion: 10},
+				Roam:               opts.Bool(true),
+				FocusNodeAdjacency: opts.Bool(true),
+			}),
+			charts.WithEmphasisOpts(opts.Emphasis{
+				Label: &opts.Label{
+					Show:     opts.Bool(true),
+					Color:    "black",
+					Position: "left",
+				},
+			}),
+			charts.WithLineStyleOpts(opts.LineStyle{
+				Curveness: 0.3,
+			}),
+		)
+
+	page.AddCharts(graph)
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+	return c.Send((page.RenderContent()))
+
+	// return c.JSON(map[string]any{"nodes": nodes, "links": links})
 
 }

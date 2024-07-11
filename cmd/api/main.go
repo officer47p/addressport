@@ -59,7 +59,9 @@ func main() {
 
 	app := fiber.New(config)
 	app.Use(cors.New())
+
 	apiv1 := app.Group("/api/v1")
+	// application := app.Group("/app/investigation/")
 
 	// TODO: add query filters to the handler
 	apiv1.Get("/reports", reportsHandler.HandleGetReports)
