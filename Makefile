@@ -16,6 +16,12 @@ build_listener:
 run_listener: build_listener
 	@./bin/listener --listenAddr :3001
 
+remove_database:
+	@docker-compose -f mongodb-docker-compose.yml rm -f
+
+start_new_database: remove_database
+	@docker-compose -f mongodb-docker-compose.yml up --build
+
 seed:
 	@go run scripts/seed.go
 
