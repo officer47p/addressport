@@ -6,14 +6,14 @@ import (
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
-	"github.com/officer47p/addressport/lib/types"
+	"github.com/officer47p/addressport/lib/thirdparty"
 	"github.com/officer47p/addressport/lib/utils"
 )
 
 type BlockchainGraph interface {
 	Dropper
 	GetAddresses(label string) (*[]dbtype.Node, error)
-	AddTransaction(types.Transaction) error
+	AddTransaction(thirdparty.Transaction) error
 }
 
 type Neo4jBlockchainGraph struct {
@@ -44,7 +44,7 @@ func (graph *Neo4jBlockchainGraph) GetAddresses() (*[]dbtype.Node, error) {
 
 }
 
-func (graph *Neo4jBlockchainGraph) AddTransaction(tx types.Transaction) error {
+func (graph *Neo4jBlockchainGraph) AddTransaction(tx thirdparty.Transaction) error {
 	from, err := graph.addAddress(tx.From)
 	if err != nil {
 		return err

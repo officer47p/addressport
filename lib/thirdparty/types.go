@@ -1,4 +1,4 @@
-package types
+package thirdparty
 
 type Block struct {
 	Network           string

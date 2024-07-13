@@ -2,7 +2,8 @@ build_api:
 	@ go build -o bin/api cmd/api/main.go
 
 run_api: build_api
-	@./bin/api --listenAddr :3001
+	@./bin/api
+	# @./bin/api --listenAddr :3001
 
 build_client:
 	@ go build -o bin/client cmd/client/main.go

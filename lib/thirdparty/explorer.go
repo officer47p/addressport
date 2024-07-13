@@ -5,25 +5,10 @@ import (
 	"log"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/officer47p/addressport/lib/types"
 )
 
 type Explorer interface {
-	GetAllTransactionsForAddress(string) ([]types.Transaction, error)
-}
-
-type etherscanTransaction struct {
-	Hash            string `json:"hash"`
-	From            string `json:"from"`
-	To              string `json:"to"`
-	Value           string `json:"value"`
-	ContractAddress string `json:"contractAddress"`
-}
-
-type etherscanGetAllTransactionsReponse struct {
-	Status  string                 `json:"status"`
-	Message string                 `json:"message"`
-	Result  []etherscanTransaction `json:"result"`
+	GetAllTransactionsForAddress(string) ([]Transaction, error)
 }
 
 type EtherscanExplorer struct {
@@ -34,8 +19,7 @@ func NewEtherscanExplorer(apiKey string) *EtherscanExplorer {
 	return &EtherscanExplorer{apiKey: apiKey}
 }
 
-func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]types.Transaction, error) {
-	// Create a Resty Client
+func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]Transaction, error) {
 	client := resty.New()
 
 	resp, err := client.R().
@@ -51,26 +35,39 @@ func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]typ
 			"apikey":     ex.apiKey,
 		}).
 		SetHeader("Accept", "application/json").
-		// SetAuthToken("BC594900518B4F7EAC75BD37F019E08FBC594900518B4F7EAC75BD37F019E08F").
 		Get("https://api.etherscan.io/api")
 
 	if err != nil {
 		log.Printf("explorer: error while fetching transactions of an address. err: %e\n", err)
-		return []types.Transaction{}, err
+		return []Transaction{}, err
 	}
 
 	var result etherscanGetAllTransactionsReponse
 	err = json.Unmarshal(resp.Body(), &result)
 
 	if err != nil {
-		log.Printf("explorer: error while fetching transactions of an address. err: %e\n response: %s\n", err, resp.Body())
-		return []types.Transaction{}, err
+		log.Printf("explorer: error while parsing transactions of an address. err: %e\n response: %s\n", err, resp.Body())
+		return []Transaction{}, err
 	}
 
-	transactions := []types.Transaction{}
+	transactions := []Transaction{}
 	for _, tx := range result.Result {
-		transactions = append(transactions, types.Transaction{From: tx.From, To: tx.To, TxHash: tx.Hash, Value: tx.Value})
+		transactions = append(transactions, Transaction{From: tx.From, To: tx.To, TxHash: tx.Hash, Value: tx.Value})
 	}
 
 	return transactions, nil
+}
+
+type etherscanTransaction struct {
+	Hash            string `json:"hash"`
+	From            string `json:"from"`
+	To              string `json:"to"`
+	Value           string `json:"value"`
+	ContractAddress string `json:"contractAddress"`
+}
+
+type etherscanGetAllTransactionsReponse struct {
+	Status  string                 `json:"status"`
+	Message string                 `json:"message"`
+	Result  []etherscanTransaction `json:"result"`
 }

@@ -1,3 +1,15 @@
+###
+# Get all the transactions that the given address has ever associated with.
+# THIS IS A RANDOM ADDRESS FROM ETHERSCAN THAT HAS BOTH SOME NATIVE
+# TRANSACTIONS AND TOKEN TRANSFERS
+# DEPTH 1
+GET   http://localhost:3001/api/v1/investigation/tools/transaction-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152?depth=1&format=nodesandlinks&
+Content-Type: application/json
+###
+
+
+
+
 # Get all reports for all addresses
 GET http://localhost:3001/api/v1/reports
 ###
@@ -76,5 +88,5 @@ Content-Type: application/json
 # THIS IS A RANDOM ADDRESS FROM ETHERSCAN THAT HAS BOTH SOME NATIVE
 # TRANSACTIONS AND TOKEN TRANSFERS
 # DEPTH 1
-GET   http://localhost:3001/api/v1/investigation/tools/transaction-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152?depth=1&
+GET   http://localhost:3001/api/v1/investigation/tools/transaction-association/0xC1D8E8f14b6AA1cf2F2321348Cbb51d94dc73152?depth=1&format=nodesandlinks&
 Content-Type: application/json

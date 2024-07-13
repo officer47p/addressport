@@ -6,20 +6,19 @@ import (
 
 	ethereumTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/officer47p/addressport/lib/types"
 )
 
 type EvmProvider interface {
 	// GetLatestBlockNumber() (int64, error)
-	GetBlockByNumber(n int64) (types.Block, error)
+	GetBlockByNumber(n int64) (Block, error)
 }
 
 type ThirdPartyEvmProvider struct {
 	client  *ethclient.Client
-	network types.Network
+	network Network
 }
 
-func NewEvmProvider(url string, network types.Network) (ThirdPartyEvmProvider, error) {
+func NewEvmProvider(url string, network Network) (ThirdPartyEvmProvider, error) {
 	ctx := context.Background()
 	client, err := ethclient.DialContext(ctx, url)
 
@@ -30,34 +29,19 @@ func NewEvmProvider(url string, network types.Network) (ThirdPartyEvmProvider, e
 	return ThirdPartyEvmProvider{client: client, network: network}, nil
 }
 
-// func (p ThirdPartyEvmProvider) GetLatestBlockNumber() (int64, error) {
-// 	ctx := context.Background()
-// 	n, err := p.client.BlockNumber(ctx)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	// Return type of BlockNumber() is uint64, so it will never be a negative number
-// 	// if n < 0 {
-// 	// 	return 0, errors.New("node is not synced")
-// 	// }
-
-// 	return int64(n), nil
-// }
-
-func (p ThirdPartyEvmProvider) GetBlockByNumber(n int64) (types.Block, error) {
+func (p ThirdPartyEvmProvider) GetBlockByNumber(n int64) (Block, error) {
 	ctx := context.Background()
 	block, err := p.client.BlockByNumber(ctx, big.NewInt(n))
 	if err != nil {
-		return types.Block{}, err
+		return Block{}, err
 	}
 
-	var transactions []types.Transaction
+	var transactions []Transaction
 	for _, t := range block.Transactions() {
 		transactions = append(transactions, parseTransaction(t, block, p.network))
 	}
 
-	return types.Block{
+	return Block{
 		Network:           p.network.Name,
 		BlockNumber:       block.Number().Int64(),
 		BlockHash:         block.Hash().String(),
@@ -66,7 +50,7 @@ func (p ThirdPartyEvmProvider) GetBlockByNumber(n int64) (types.Block, error) {
 	}, nil
 }
 
-func parseTransaction(tx *ethereumTypes.Transaction, block *ethereumTypes.Block, network types.Network) types.Transaction {
+func parseTransaction(tx *ethereumTypes.Transaction, block *ethereumTypes.Block, network Network) Transaction {
 	blockNumber := block.Number().Int64()
 	blockHash := block.Hash().String()
 	txHash := tx.Hash().String()
@@ -80,7 +64,7 @@ func parseTransaction(tx *ethereumTypes.Transaction, block *ethereumTypes.Block,
 	}
 	value := tx.Value().String()
 
-	return types.Transaction{
+	return Transaction{
 		Network:     network.Name,
 		Currency:    network.Currency,
 		BlockNumber: blockNumber,
