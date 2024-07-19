@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address Info Graph</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .content-wrapper {
+        flex: 1 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 2rem 1rem;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+      }
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #34495e;
+      }
+      input,
+      select {
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #2980b9;
+      }
+      footer {
+        flex-shrink: 0;
+        text-align: center;
+        padding: 1rem;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+      }
+      footer a {
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      footer a:hover {
+        color: #2ecc71;
+      }
+      @media (max-width: 480px) {
+        .container {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <div class="container">
+        <h1>Address Info Graph</h1>
+        <form id="addressForm">
+          <label for="targetAddress">Target Address:</label>
+          <input
+            type="text"
+            id="targetAddress"
+            name="targetAddress"
+            required
+            placeholder="Enter target address"
+          />
+
+          <label for="depth">Depth:</label>
+          <select id="depth" name="depth" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        View the
+        <a
+          href="https://github.com/officer47p/addressport"
+          target="_blank"
+          rel="noopener noreferrer"
+          >source code</a
+        >
+        on GitHub
+      </p>
+    </footer>
+
+    <script>
+      document
+        .getElementById("addressForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const targetAddress = document.getElementById("targetAddress").value;
+          const depth = document.getElementById("depth").value;
+          const url = `/api/v1/investigation/tools/transaction-association/${targetAddress}?depth=${depth}`;
+          window.location.href = url;
+        });
+    </script>
+  </body>
+</html>

@@ -30,7 +30,7 @@ func (ex *EtherscanExplorer) GetAllTransactionsForAddress(address string) ([]Tra
 			"startblock": "0",
 			"endblock":   "99999999",
 			"page":       "1",
-			"offset":     "10",
+			"offset":     "20", // can be maximum 10_000
 			"sort":       "asc",
 			"apikey":     ex.apiKey,
 		}).

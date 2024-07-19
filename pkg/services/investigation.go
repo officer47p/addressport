@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/dominikbraun/graph"
-	"github.com/officer47p/addressport/lib/thirdparty"
-	"github.com/officer47p/addressport/lib/utils"
+	"github.com/officer47p/addressport/pkg/thirdparty"
+	"github.com/officer47p/addressport/pkg/utils"
 )
 
 func NewInvestigationToolService(explorer thirdparty.Explorer) InvestigationToolService {

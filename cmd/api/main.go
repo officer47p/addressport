@@ -2,22 +2,18 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
-	"github.com/officer47p/addressport/lib/api"
-	"github.com/officer47p/addressport/lib/services"
-	"github.com/officer47p/addressport/lib/thirdparty"
+	"github.com/officer47p/addressport/pkg/api"
+	"github.com/officer47p/addressport/pkg/services"
+	"github.com/officer47p/addressport/pkg/thirdparty"
 )
-
-var config = fiber.Config{
-	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		return c.JSON(map[string]string{"error": err.Error()})
-	},
-}
 
 func main() {
 
@@ -29,45 +25,42 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(db.DBURI).SetTimeout(time.Second*5))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// _, err = client.Database(db.DBNAME).ListCollectionNames(context.TODO(), bson.M{})
-	// if err != nil {
-	// 	log.Fatalf("warmup connection to database was faild. error: %+v", err)
-	// }
-
-	// // Dependencies
-	// store initialization
-	// reportsStore := db.NewMongoReportsStore(client, db.DBNAME)
 	// thirdparty initialization
 	etherscanExplorer := thirdparty.NewEtherscanExplorer(os.Getenv("ETHERSCAN_API_KEY"))
 	// service initialization
-	// reportsService := services.NewReportsService(reportsStore)
 	investigationToolService := services.NewInvestigationToolService(etherscanExplorer)
-
 	// handlers initialization
-	// reportsHandler := api.NewReportsHandler(reportsService)
 	investigationToolHandler := api.NewInvestigationToolHandler(investigationToolService)
 
-	app := fiber.New(config)
+	fiberConfig, err := getFiberConfig()
+	if err != nil {
+		log.Fatalf("error when getting fiber configurations. err: %s", err.Error())
+	}
+
+	app := fiber.New(*fiberConfig)
 	app.Use(cors.New())
 
-	apiv1 := app.Group("/api/v1")
-	// application := app.Group("/app/investigation/")
+	dashboardRouter := app.Group("/")
+	dashboardRouter.Get("/", investigationToolHandler.HandleAddressInfoForm)
 
-	// TODO: add query filters to the handler
-	// apiv1.Get("/reports", reportsHandler.HandleGetReports)
-	// apiv1.Post("/reports", reportsHandler.HandlePostReport)
-	// apiv1.Get("/reports/:address", reportsHandler.HandleGetReportsByAddress)
-	// apiv1.Delete("/reports/:id", reportsHandler.HandleDeleteReport)
-	// apiv1.Put("/reports/:id", reportsHandler.HandlePutReportById)
-
-	apiv1.Get("/investigation/tools/transaction-association/:address", investigationToolHandler.HandleGetAssociatedTransactionsForAddress)
+	apiv1Router := app.Group("/api/v1")
+	apiv1Router.Get("/investigation/tools/transaction-association/:address", investigationToolHandler.HandleGetAssociatedTransactionsForAddress)
 
 	err = app.Listen(*listenAddr)
 	if err != nil {
-		panic(err)
+		log.Fatalf("error when exiting server. err: %s", err.Error())
 	}
+}
+
+func getFiberConfig() (*fiber.Config, error) {
+	engine := html.New("./pkg/views", ".html")
+	if err := engine.Load(); err != nil {
+		return nil, fmt.Errorf("error when loding templates. err: %s", err.Error())
+	}
+	return &fiber.Config{
+		Views: engine,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			return c.JSON(map[string]string{"error": err.Error()})
+		},
+	}, nil
 }

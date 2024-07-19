@@ -11,8 +11,8 @@ import (
 	"github.com/go-echarts/go-echarts/v2/components"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/gofiber/fiber/v2"
-	"github.com/officer47p/addressport/lib/services"
-	"github.com/officer47p/addressport/lib/utils"
+	"github.com/officer47p/addressport/pkg/services"
+	"github.com/officer47p/addressport/pkg/utils"
 )
 
 type InvestigationHandler struct {
@@ -23,6 +23,10 @@ func NewInvestigationToolHandler(investigationService services.InvestigationTool
 	return &InvestigationHandler{investigationService: investigationService}
 }
 
+func (h *InvestigationHandler) HandleAddressInfoForm(c *fiber.Ctx) error {
+	return c.Render("index", fiber.Map{})
+}
+
 func (h *InvestigationHandler) HandleGetAssociatedTransactionsForAddress(c *fiber.Ctx) error {
 	start, endFunc := utils.LogReuqest(c)
 	defer endFunc(start)
@@ -31,7 +35,7 @@ func (h *InvestigationHandler) HandleGetAssociatedTransactionsForAddress(c *fibe
 	address = strings.ToLower(address)
 
 	depthString := c.Query("depth", "1")
-	format := c.Query("format", "html")
+	format := c.Query("format", "html") // can also be `nodesandlinks` for raw json response
 	depth, err := strconv.Atoi(depthString)
 	if err != nil {
 		return err
@@ -80,12 +84,13 @@ func createGraphChart(address string, nodes *[]services.AddressNode, links *[]gr
 	}
 
 	page := components.NewPage()
+	page.SetPageTitle("Address Info Graph")
 	page.SetLayout(components.PageCenterLayout)
 
 	graph := charts.NewGraph()
+
 	graph.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{
-			// BackgroundColor: "#ffffff",
 			Width:  "100vw",
 			Height: "100vh",
 		}),
@@ -93,31 +98,30 @@ func createGraphChart(address string, nodes *[]services.AddressNode, links *[]gr
 			opts.Colors{"0x000000"},
 		),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "Addressport",
+			Title: "Addressport",
+
 			Subtitle: subtitle,
 		}))
 
 	graph.AddSeries("graph", graphNodes, graphLinks).
 		SetSeriesOptions(
 			charts.WithGraphChartOpts(opts.GraphChart{
-				Force: &opts.GraphForce{Repulsion: 8000},
-				Roam:  opts.Bool(true),
-				// FocusNodeAdjacency: opts.Bool(true),
+				Force:     &opts.GraphForce{Repulsion: 50},
+				Roam:      opts.Bool(true),
 				Draggable: opts.Bool(true),
 				// Layout: "circular",
-				// // Force:              &opts.GraphForce{Repulsion: 10},
-				// Roam:               opts.Bool(true),
 				// FocusNodeAdjacency: opts.Bool(true),
 			}),
 			charts.WithEmphasisOpts(opts.Emphasis{
 				Label: &opts.Label{
 					Show:     opts.Bool(true),
 					Color:    "black",
-					Position: "left",
+					Position: "top",
 				},
 			}),
 			charts.WithLineStyleOpts(opts.LineStyle{
-				Curveness: 0.3,
+				Curveness: 0.1,
+				Opacity:   0.5,
 			}),
 		)
 
