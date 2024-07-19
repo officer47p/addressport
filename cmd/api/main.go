@@ -20,9 +20,10 @@ func main() {
 	listenAddr := flag.String("listenAddr", ":3000", "The listen address")
 	flag.Parse()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if os.Getenv("ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Fatalf("Error loading .env file. err: %s", err.Error())
+		}
 	}
 
 	// thirdparty initialization
